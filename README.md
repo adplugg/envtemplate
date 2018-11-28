@@ -28,7 +28,7 @@ can pass environment variables like so:
 MY_VAR=myval envtemplate render --in some-template.txt --out rendered-file.txt
 ```
 
-# Testing
+## Testing
 
 To test the script, navigate into the test directory and run the test-runner.sh
 script:
