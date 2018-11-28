@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+# Simple script that replaces mustached variables in any file with matching
+# environment variables (if available).
+#
+# Templates:
+#
+#  Templates can be any file. Just place a {{MUSTACHED}} version of the
+#  environment variable and it will be replaced with the environment variable's
+#  value when the template is rendered (see below).
+#
+# Rendering the Template:
+#
+#    envtemplate render --in some-template.txt --out rendered-file.txt
+#
+# Usually the script works with pre-set environment variables but if you want
+# you can pass environment variables like so:
+#
+#    MY_VAR=myval envtemplate render --in some-template.txt --out rendered-file.txt
+#
+
+# Print the usage info.
+usage() {
+    echo "usage: env-template render --in some-template --out rendered-file | [-h --help]"
+}
+
+# Render the template and output the result.
+render() {
+
+    # Get all keys out of the template.
+    keys=(`awk '{while (match($0, /{{[^}]*}}/)) {pattern = substr($0, (RSTART + 2), (RLENGTH - 4)); print pattern; $0 = substr($0, RSTART + RLENGTH);}}' $IN | xargs`)
+
+    # Start with the input file.
+    cp $IN $OUT
+
+    # Loop through all found keys
+    for key in "${keys[@]}"; do
+        value=${!key}
+        sed -i.bak "s/{{$key}}/${value}/g" $OUT
+    done
+}
+
+# Get the arguments
+COMMAND=$1
+shift
+
+# Only the 'render' command is supported at this point.
+if [ "$COMMAND" != "render" ]; then
+    usage
+    exit 1
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -i | --in )     shift
+                        IN=$1
+                        ;;
+        -o | --out )    shift
+                        OUT=$1
+                        ;;
+        -h | --help )   usage
+                        exit
+                        ;;
+        * )             usage
+                        exit 1
+    esac
+    shift
+done
+
+$COMMAND

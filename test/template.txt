@@ -1,0 +1,2 @@
+The first value is {{VAR_1}}.
+The second value is {{VAR_2}} and here is {{VAR_3}}.

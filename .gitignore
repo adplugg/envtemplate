@@ -1,0 +1,9 @@
+# OSX
+.DS_Store
+
+# NetBeans
+nbproject
+
+# Testing
+test/output.txt
+test/output.txt.*
