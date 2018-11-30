@@ -1,3 +1,7 @@
+= 1.0.1 =
+
+* Improved portability - it now works on Alpine/Busybox (ash).
+
 = 1.0.0 =
 
 * Initial version.
