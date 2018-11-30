@@ -28,15 +28,18 @@ usage() {
 render() {
 
     # Get all keys out of the template.
-    keys=(`awk '{while (match($0, /{{[^}]*}}/)) {pattern = substr($0, (RSTART + 2), (RLENGTH - 4)); print pattern; $0 = substr($0, RSTART + RLENGTH);}}' $IN | xargs`)
-
+    keys=$(awk '{while (match($0, /\{\{[^\}]*\}\}/)) {pattern = substr($0, (RSTART + 2), (RLENGTH - 4)); printf pattern" "; $0 = substr($0, RSTART + RLENGTH);}}' $IN)
+    
     # Start with the input file.
     cp $IN $OUT
 
-    # Loop through all found keys
-    for key in "${keys[@]}"; do
-        value=${!key}
+    # Loop through all found keys.
+    set -- $keys
+    while [ -n "$1" ]; do           
+        key=$1
+        value=$(eval "echo \$$key")
         sed -i.bak "s/{{$key}}/${value}/g" $OUT
+        shift
     done
 }
 
